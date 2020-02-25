@@ -5,28 +5,33 @@ Central OpenGrabeso GitHub packages repository so that we can use a single resol
 You will need your GitHub access token. You can create one in [GitHub settings](https://github.com/settings/tokens)
 
 
-SBT configuration
-=================
+SBT configuration using [sbt-github-packages](https://github.com/djspiewak/sbt-github-packages)
+===============================================================================================
 
-.github.credentials
-------------------------
-This is a global file, located in your user profile / home directory
+project/plugins.sbt
+-------------------
 
-```
-realm=github
-host=www.github.com
-user=YourGitHubName
-password=yourgithubaccesstoken
-```
+`addSbtPlugin("com.codecommit" % "sbt-github-packages" % "0.3.1")`
 
 build.sbt
 ---------
 
 ```
-resolvers in ThisBuild += "GitHub OpenGrabeso Apache Maven Packages" at "https://maven.pkg.github.com/OpenGrabeso/packages/"
+resolvers += Resolver.githubPackages("OpenGrabeso", "packages")
 
-credentials in ThisBuild += Credentials(Path.userHome / "github.credentials")
+githubTokenSource in ThisBuild := TokenSource.GitConfig("github.token") || TokenSource.Environment("GITHUB_USERTOKEN") || TokenSource.Environment("GITHUB_TOKEN")
 ```
+
+.gitconfig 
+--------------------------------------------------------------------
+This is a global file, located in your user profile / home directory
+
+```
+[github]
+  actor = YourGitHubUserName
+  token = yourgithubaccesstoken
+```
+
 
 Maven configuration
 ===================
@@ -51,29 +56,26 @@ This is a global file, located in the .m2 subfolder of your user profile / home 
 </settings>
 ```
 
+SBT configuration (does not seem to work, use sbt-github-packages)
+=================
 
-SBT configuration using [sbt-github-packages](https://github.com/djspiewak/sbt-github-packages)
-===============================================================================================
+.github.credentials
+------------------------
+This is a global file, located in your user profile / home directory
 
-project/plugins.sbt
--------------------
-
-`addSbtPlugin("com.codecommit" % "sbt-github-packages" % "0.3.1")`
+```
+realm=github
+host=www.github.com
+user=YourGitHubName
+password=yourgithubaccesstoken
+```
 
 build.sbt
 ---------
 
-`resolvers += Resolver.githubPackages("OpenGrabeso", "packages")`
-
-
-.gitconfig 
---------------------------------------------------------------------
-This is a global file, located in your user profile / home directory
-
 ```
-[github]
-  actor = YourGitHubUserName
-  token = yourgithubaccesstoken
-```
+resolvers in ThisBuild += "GitHub OpenGrabeso Apache Maven Packages" at "https://maven.pkg.github.com/OpenGrabeso/packages/"
 
+credentials in ThisBuild += Credentials(Path.userHome / "github.credentials")
+```
 
